@@ -18,34 +18,28 @@ def verify_payment(request):
     tx_ref = request.GET.get("trx_ref")
     result, status = PaymentService.verify_payment(tx_ref)
     return JsonResponse(result, status=status)
-# --------------------
-# Listing ViewSet
-# --------------------
 class ListingViewSet(viewsets.ModelViewSet):
+    permission_classes=[]
     queryset = Listing.objects.all()
     serializer_class = ListingSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        # Automatically set the owner to the current user
         serializer.save(owner=self.request.user)
 
-# --------------------
-# Booking ViewSet
-# --------------------
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        return Booking.objects.filter(user=self.request.user)
+
     def perform_create(self, serializer):
-        # Automatically set the user to the current user
         booking=serializer.save(user=self.request.user)
 
         recipient_email = booking.user.email
         booking_id = booking.id
 
-        # Trigger task ONLY after DB commit
         transaction.on_commit(
             lambda: send_booking_confirmation_email.delay(
                 booking_id=booking_id,

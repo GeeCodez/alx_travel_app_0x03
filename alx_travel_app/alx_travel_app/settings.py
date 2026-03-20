@@ -117,12 +117,13 @@ CHAPA_SECRET_KEY = os.getenv('CHAPA_SECRET_KEY')
 if not CHAPA_SECRET_KEY:
     raise Exception("CHAPA_SECRET_KEY is not set in environment variables")
 
-# CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
+CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
-# INSTALLED_APPS += ['django_celery_results']
-# CELERY_RESULT_BACKEND = 'django-db'
+INSTALLED_APPS += ['django_celery_results']
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXPIRES = 60*60
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

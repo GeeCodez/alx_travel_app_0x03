@@ -53,7 +53,6 @@ class PaymentService:
             # logger.error(f"Chapa API returned an error for booking {booking_id}: {data}")
             return {"error": "Chapa API error", "details": data}, response.status_code
 
-        # Create payment record in DB (idempotent: check if tx_ref exists)
         payment, created = Payment.objects.get_or_create(
             transaction_id=tx_ref,
             defaults={
@@ -90,7 +89,6 @@ class PaymentService:
         try:
             payment = Payment.objects.select_related("booking").get(transaction_id=tx_ref)
         except Payment.DoesNotExist:
-            # logger.warning(f"Payment not found for tx_ref {tx_ref}")
             return {"error": "Payment not found"}, 404
 
         # Idempotent update
