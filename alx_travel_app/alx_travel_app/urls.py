@@ -16,10 +16,19 @@ schema_view = get_schema_view(
         description="API documentation for ALX Travel App",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="godsway702@gmail.com"),
-        ),
+    ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    authentication_classes=[],
 )
+schema_view.security_definitions = {
+    'Bearer': {
+        'type': 'apiKey',
+        'name': 'Authorization',
+        'in': 'header',
+        'description': "Enter: Bearer <your_token>"
+    }
+}
 
 urlpatterns = [
     path('',home,name='home'),

@@ -12,13 +12,13 @@ from .tasks import send_booking_confirmation_email,send_payment_confirmation_ema
 
 
 @api_view(['GET'])
-@permission_classes(permissions.AllowAny)
+@permission_classes([permissions.AllowAny])
 def api_root(request, format=None):
     return Response({
         'listings': reverse('listing-list', request=request, format=format),
         'bookings': reverse('booking-list', request=request, format=format),
-        'initiate_payment': reverse('initiate_payment', request=request, format=format),
-        'verify_payment': reverse('verify_payment', request=request, format=format),
+        # 'initiate_payment': reverse('initiate_payment', request=request, format=format),
+        # 'verify_payment': reverse('verify_payment', request=request, format=format),
         'login': reverse('token_obtain_pair', request=request, format=format),
     })
 
