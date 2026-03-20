@@ -44,3 +44,7 @@ def send_booking_confirmation_email(self, booking_id, recipient_email):
         [recipient_email],
         fail_silently=False,
     )
+
+@shared_task
+def test_task():
+    print("Celery is working")

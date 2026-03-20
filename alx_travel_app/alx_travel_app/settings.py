@@ -15,10 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+DEBUG = os.getenv('DEBUG','False')=='True'
+ALLOWED_HOSTS=os.getenv('ALLOWED_HOSTS',default='localhost').split(',')
 
 
 # Application definition
@@ -30,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'drf_yasg',
     'rest_framework',
     'listings',
@@ -38,6 +37,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -111,19 +111,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 CHAPA_SECRET_KEY = os.getenv('CHAPA_SECRET_KEY')
 if not CHAPA_SECRET_KEY:
     raise Exception("CHAPA_SECRET_KEY is not set in environment variables")
 
-CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-
-INSTALLED_APPS += ['django_celery_results']
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_RESULT_EXPIRES = 60*60
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
